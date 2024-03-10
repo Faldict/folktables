@@ -133,12 +133,16 @@ def load_definitions(root_dir, year=2018, horizon='1-Year', download=False):
 
     base_datadir = os.path.join(root_dir, str(year), horizon)
     file_path = os.path.join(base_datadir, 'definition.csv')
+
     if os.path.exists(file_path):
         return pd.read_csv(file_path, sep=',', header=None, names=list(range(7)))
     if not download:
         raise FileNotFoundError(
             f'Could not find {year} {horizon} attribute definition. Call get_definitions with download=True to download the definitions.')
-
+    
+    if not os.path.exists(base_datadir):
+        os.makedirs(base_datadir, exist_ok=True)
+    
     # download definition first
     print('Downloading the attribute definition file...')
     year_string = year if horizon == '1-Year' else f'{year - 4}-{year}'
